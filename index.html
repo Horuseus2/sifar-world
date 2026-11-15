@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-time="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sifar Mahfuz | A cozy pixel world</title>
+<meta name="description" content="The personal world of Sifar Mahfuz, a creative developer from Dhaka. Websites, browser games and small apps, built block by block.">
+<meta name="theme-color" content="#69bdf0">
+<script>
+  (function () {
+    var r = document.documentElement; r.classList.add('js');
+    var t = null; try { t = JSON.parse(localStorage.getItem('sw-time-of-day')); } catch (e) { }
+    if (!t) { var h = new Date().getHours(); t = (h >= 19 || h < 6) ? 'night' : 'day'; }
+    r.dataset.time = t;
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-home">
+
+<div id="loader" role="status" aria-label="Loading">
+  <div class="loader__in">
+    <div class="loader__block"></div>
+    <div class="loader__title">GENERATING WORLD</div>
+    <div class="loader__bar"><div class="loader__fill"></div></div>
+    <div class="loader__tip">Stacking blocks...</div>
+  </div>
+</div>
+<div id="wipe" aria-hidden="true"></div>
+<script>try { if (sessionStorage.getItem('sw-wipe')) document.getElementById('wipe').className = 'on pre'; } catch (e) { }</script>
+
+<header class="hud-top">
+  <a class="brand" href="#home" aria-label="Sifar's World, back to top">
+    <span class="brand__block"></span>
+    <span class="debug">
+      <span><b>SIFAR'S WORLD</b></span>
+      <span>XYZ: <i id="dbgX" style="font-style:normal">0</i> / <em id="dbgY">64</em> / <i id="dbgZ" style="font-style:normal">0</i></span>
+      <span>Biome: <em id="dbgBiome">Surface</em></span>
+    </span>
+  </a>
+  <div class="hud-btns">
+    <button class="hud-btn" id="btnTime" type="button" aria-label="Toggle day and night" data-tip="Day. Click for night"><i class="px" data-px="☀️"></i></button>
+    <button class="hud-btn" id="btnSfx" type="button" aria-label="Toggle sound effects" data-tip="Sound effects on"><i class="px" data-px="🔊"></i></button>
+    <button class="hud-btn" id="btnMusic" type="button" aria-label="Toggle calm music" data-tip="Music off"><i class="px" data-px="🎵"></i></button>
+  </div>
+</header>
+
+<nav class="hotbar" aria-label="Main">
+  <div class="xp" aria-hidden="true"><div class="xp__fill"></div><div class="xp__lvl">0</div></div>
+  <div class="slots">
+    <a class="slot on" href="#home" data-tip="Surface"><i class="px" data-px="🏝️"></i><kbd>1</kbd></a>
+    <a class="slot" href="#about" data-tip="About me"><i class="px" data-px="📖"></i><kbd>2</kbd></a>
+    <a class="slot" href="#skills" data-tip="Inventory"><i class="px" data-px="⛏️"></i><kbd>3</kbd></a>
+    <a class="slot" href="#quests" data-tip="Quests"><i class="px" data-px="🗺️"></i><kbd>4</kbd></a>
+    <a class="slot" href="#stats" data-tip="World stats"><i class="px" data-px="📊"></i><kbd>5</kbd></a>
+    <a class="slot" href="#contact" data-tip="Contact"><i class="px" data-px="✉️"></i><kbd>6</kbd></a>
+  </div>
+</nav>
+<div id="toasts" aria-live="polite"></div>
+
+<main>
+
+<!-- ================= SURFACE ================= -->
+<section class="hero" id="home" data-biome="Surface">
+  <div class="sky" aria-hidden="true">
+    <div class="sky__grad sky__grad--day"></div>
+    <div class="sky__grad sky__grad--night"></div>
+    <div class="stars stars--a"></div><div class="stars stars--b"></div>
+    <div class="orb" data-par="0.35"><i class="orb__sun"></i><i class="orb__moon"></i></div>
+    <div id="clouds"></div>
+    <div class="hills hills--far d" data-par="0.22"></div><div class="hills hills--far n" data-par="0.22"></div>
+    <div class="hills hills--near d" data-par="0.1"></div><div class="hills hills--near n" data-par="0.1"></div>
+  </div>
+  <div class="ground" aria-hidden="true"></div>
+  <div id="sprouts" aria-hidden="true"></div>
+
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <div class="chip" data-r><i></i>World loaded: Dhaka, Bangladesh</div>
+      <h1 class="title" id="title" aria-label="Sifar Mahfuz">
+        <span class="w">SIFAR</span><br><span class="w">MAHFUZ</span>
+        <button class="splash" id="splash" type="button" aria-label="Splash text. Click for another.">Made in Dhaka!</button>
+      </h1>
+      <p class="hero__text" data-r style="--i:6">Creative developer and designer. I build <b>websites</b>, <b>browser games</b> and <b>small apps</b>, block by block, with a lot of love for motion and feel.</p>
+      <div class="btn-row" data-r style="--i:8">
+        <a class="btn btn--go" href="projects.html"><i class="px" data-px="🗺️"></i>Open quest log</a>
+        <a class="btn" href="#contact"><i class="px" data-px="✉️"></i>Say hi</a>
+      </div>
+      <div class="hearts" data-r style="--i:10" data-stagger aria-label="Mood: calm">
+        <i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i><i class="px" data-px="❤️"></i>
+        <span>Mood: calm</span>
+      </div>
+    </div>
+
+    <div class="island" data-r="pop" style="--i:4">
+      <div class="island__float"><canvas id="island" width="176" height="200" aria-label="A small floating island. Click the blocks to mine them."></canvas><span class="island__say" id="islandSay" aria-hidden="true"></span></div>
+      <div class="island__hint" id="islandHint">Psst. Click the island to mine blocks.</div>
+    </div>
+  </div>
+
+  <a class="scroll-cue" href="#about"><i class="px" data-px="⛏️"></i>DIG DOWN</a>
+</section>
+
+<!-- ================= TOPSOIL: ABOUT ================= -->
+<section class="layer layer--dirt" id="about" data-biome="Topsoil">
+  <div class="layer__bg"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Layer 01 · Topsoil</span>
+      <h2 class="h2" data-r style="--i:1">About the player</h2>
+      <p class="lede" data-r style="--i:2">Every world needs someone to build it. Here is the one behind this one.</p>
+    </div>
+
+    <div class="about">
+      <div class="box box--pad card-player" data-r="left">
+        <div class="avatar" id="avatar" role="img" aria-label="Pixel portrait of Sifar"></div>
+        <div class="nametag">Sifar Mahfuz</div>
+        <ul class="sheet">
+          <li><span>Class</span><b>Creative Developer</b></li>
+          <li><span>Spawn point</span><b>Dhaka, Bangladesh</b></li>
+          <li><span>Guild</span><b>Kashful Foundation</b></li>
+          <li><span>Squad</span><b>Gaming Boys Futsal</b></li>
+          <li><span>Badge</span><b>CSCA™</b></li>
+          <li><span>Favourite weather</span><b>Rain</b></li>
+        </ul>
+      </div>
+      <div class="box box--pad bio" data-r="right">
+        <h3>Hi, I am Sifar.</h3>
+        <p>I live in Dhaka and I like making things for the web that feel alive: sites that move gently, games that open in a browser tab, and little tools that make life easier for the people around me.</p>
+        <p>By day I am a Creative Associate at Kashful Foundation, a youth led organisation working on civic, digital, gender and climate rights. After hours I build side quests, like an open world game set on my own streets and a futsal app for my squad.</p>
+        <p>Off screen you will find me on a futsal turf, inside a thriller novel, or happily watching the rain.</p>
+        <div class="likes">
+          <span class="tag"><i class="px" data-px="🌧️"></i>Rainy days</span>
+          <span class="tag"><i class="px" data-px="⚽"></i>Futsal nights</span>
+          <span class="tag"><i class="px" data-px="📚"></i>Thrillers</span>
+          <span class="tag"><i class="px" data-px="🎮"></i>Gaming</span>
+          <span class="tag"><i class="px" data-px="🎨"></i>Design</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="trio" data-stagger>
+      <div class="box box--pad craft-card" data-r><i class="px" data-px="🌐" data-px-size="20"></i><h3>Websites</h3><p>Brand led sites with tidy type, real content and motion that feels smooth, never noisy.</p></div>
+      <div class="box box--pad craft-card" data-r><i class="px" data-px="🕹️" data-px-size="20"></i><h3>Games</h3><p>Browser games made from code alone. No downloads, no asset packs, just a link.</p></div>
+      <div class="box box--pad craft-card" data-r><i class="px" data-px="📱" data-px-size="20"></i><h3>Apps</h3><p>Small realtime tools for real groups of people, built to be used every single week.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STONE: SKILLS ================= -->
+<section class="layer layer--stone" id="skills" data-biome="Stone Layer" data-ach="deeper" data-ores="gold:3,emerald:2" data-ore-base="stone">
+  <div class="layer__bg"></div><div class="layer__edge"></div>
+  <div class="lantern" style="left:8%;top:150px"></div><div class="lantern" style="right:8%;top:150px"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Layer 02 · Stone</span>
+      <h2 class="h2" data-r style="--i:1">Inventory</h2>
+      <p class="lede" data-r style="--i:2">The tools I carry. Hover or tap an item to inspect it. Shiny rocks in the walls can be mined.</p>
+    </div>
+
+    <div class="box inv" data-r>
+      <div class="inv__title"><span>Tools and materials</span><span id="invCount">18 / 18</span></div>
+      <div class="inv__grid" id="inv"></div>
+      <div class="inv__info" id="invInfo" aria-live="polite"><b>Pick an item</b><span>Everything here was used in a real project on this site.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEEP: QUESTS ================= -->
+<section class="layer layer--deep" id="quests" data-biome="Deep Rock" data-ores="diamond:3,ruby:2" data-ore-base="deep">
+  <div class="layer__bg"></div><div class="layer__edge"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Layer 03 · Deep rock</span>
+      <h2 class="h2" data-r style="--i:1">Featured quests</h2>
+      <p class="lede" data-r style="--i:2">Three things I built and shipped. Each one has a full story in the quest log.</p>
+    </div>
+
+    <div class="quests" data-stagger>
+      <a class="box qcard" href="projects.html#bta" data-r>
+        <div class="qcard__img"><img src="assets/shots/bta-menu.webp" alt="Boys Theft Auto main menu over a night view of Dhaka" loading="lazy"><b>GAME</b></div>
+        <div class="qcard__body"><h3>Boys Theft Auto</h3><p>An open world game on the real map of Dhaka Cantonment, playable in a browser tab with friends.</p><span class="go">View quest <i>▶</i></span></div>
+      </a>
+      <a class="box qcard" href="projects.html#kashful" data-r>
+        <div class="qcard__img"><img src="assets/shots/kashful-home.webp" alt="Kashful Foundation website home page" loading="lazy"><b>WEBSITE</b></div>
+        <div class="qcard__body"><h3>Kashful Foundation</h3><p>A full redesign for a youth led rights organisation, drawn from the colours of its own logo.</p><span class="go">View quest <i>▶</i></span></div>
+      </a>
+      <a class="box qcard" href="projects.html#gb" data-r>
+        <div class="qcard__img"><img src="assets/shots/gb-card.webp" alt="Gaming Boys Futsal app" loading="lazy"><b>APP</b></div>
+        <div class="qcard__body"><h3>GB Futsal RSVP</h3><p>One link that tells my futsal squad who is in, who is out and who has paid, in real time.</p><span class="go">View quest <i>▶</i></span></div>
+      </a>
+    </div>
+    <div class="center" style="margin-top:60px" data-r><a class="btn btn--gold" href="projects.html"><i class="px" data-px="🗺️"></i>Open the full quest log</a></div>
+  </div>
+</section>
+
+<!-- ================= CAVES: STATS ================= -->
+<section class="layer layer--cave" id="stats" data-biome="Crystal Caves" data-ach="cave" data-ores="amethyst:4,diamond:2" data-ore-base="cave">
+  <div class="layer__bg"></div><div class="layer__edge"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Layer 04 · Crystal caves</span>
+      <h2 class="h2" data-r style="--i:1">World statistics</h2>
+      <p class="lede" data-r style="--i:2">Who has been here, and what you have been up to since you spawned.</p>
+    </div>
+
+    <div class="stats" data-stagger>
+      <div class="box stat" data-r><i class="px" data-px="🌍" data-px-size="20"></i><b id="stVisits">0</b><span id="stVisitsLabel">World visits</span></div>
+      <div class="box stat" data-r><i class="px" data-px="🧭" data-px-size="20"></i><b id="stYou">0</b><span>Your visits</span></div>
+      <div class="box stat" data-r><i class="px" data-px="⏳" data-px-size="20"></i><b id="stTime">0:00</b><span>Time you explored</span></div>
+      <div class="box stat" data-r><i class="px" data-px="📅" data-px-size="20"></i><b id="stDay">1</b><span>World day</span></div>
+      <div class="box stat" data-r><i class="px" data-px="⛏️" data-px-size="20"></i><b id="stBlocks">0</b><span>Blocks you mined</span></div>
+      <div class="box stat" data-r><i class="px" data-px="💎" data-px-size="20"></i><b id="stGems">0</b><span>Gems you found</span></div>
+      <div class="box stat" data-r><i class="px" data-px="🏆" data-px-size="20"></i><b id="stAch">0</b><span>Achievements</span></div>
+      <div class="box stat" data-r><i class="px" data-px="📜" data-px-size="20"></i><b id="stQuests">3</b><span>Quests shipped</span></div>
+    </div>
+    <p class="note" id="stNote" data-r></p>
+  </div>
+</section>
+
+<!-- ================= HOME BASE: CONTACT ================= -->
+<section class="layer layer--base" id="contact" data-biome="Home Base" data-ach="base">
+  <div class="layer__bg"></div><div class="layer__edge"></div>
+  <div class="lantern" style="left:10%;top:140px"></div><div class="lantern" style="right:10%;top:140px"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Layer 05 · Home base</span>
+      <h2 class="h2" data-r style="--i:1">Say hi</h2>
+      <p class="lede" data-r style="--i:2">You made it to the bottom. The kettle is on. Pick a door and knock.</p>
+    </div>
+
+    <div class="contact" data-stagger>
+      <div class="box sign" data-r>
+        <div class="sign__ico" data-social="mail"></div>
+        <h3>Email</h3>
+        <p><a class="mono" href="mailto:sifarmahfuz@gmail.com">sifarmahfuz@gmail.com</a></p>
+        <button class="copy-btn" type="button" data-copy="sifarmahfuz@gmail.com">Copy address</button>
+      </div>
+      <a class="box sign" data-r href="https://www.facebook.com/sifarmahfuz" target="_blank" rel="noopener">
+        <div class="sign__ico" data-social="fb"></div>
+        <h3>Facebook</h3>
+        <p class="mono">/sifarmahfuz</p>
+        <span class="go">Visit ▶</span>
+      </a>
+      <a class="box sign" data-r href="https://www.instagram.com/sifarmahfuz/" target="_blank" rel="noopener">
+        <div class="sign__ico" data-social="ig"></div>
+        <h3>Instagram</h3>
+        <p class="mono">@sifarmahfuz</p>
+        <span class="go">Visit ▶</span>
+      </a>
+      <a class="box sign" data-r href="https://www.linkedin.com/in/sifar-mahfuz-csca%E2%84%A2-a74709247/" target="_blank" rel="noopener">
+        <div class="sign__ico" data-social="li"></div>
+        <h3>LinkedIn</h3>
+        <p>Sifar Mahfuz, CSCA™</p>
+        <span class="go">Visit ▶</span>
+      </a>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <a class="btn btn--sm" href="#home"><i class="px" data-px="⬆️"></i>Climb back to the surface</a>
+    <p>Built block by block by Sifar Mahfuz. No pixels were harmed.</p>
+  </footer>
+  <div class="bedrock" aria-hidden="true"></div>
+</section>
+
+</main>
+
+<script src="js/core.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>
