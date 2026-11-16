@@ -193,9 +193,25 @@
   })();
 
   // brand block, favicon, loader block, lanterns, social icons
-  SW.blockURL = (function () {
-    var b = SW.makeBlock('grass', 7), o = mk(64, 64), x = o.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(b, 0, 0, 64, 64); return o.toDataURL();
-  })();
+  // brand mark: an original pixel "S" monogram tile
+  SW.blockURL = SW.sprite([
+    '..KKKKKKKKKKKK..',
+    '.KLLLLLLLLLLLLK.',
+    'KLLBBBBBBBBBBBbK',
+    'KLBBBWWWWWWBBBbK',
+    'KLBBWWWWWWWWBBbK',
+    'KLBBWWBBBBBBBBbK',
+    'KLBBWWWWWWWBBBbK',
+    'KLBBBWWWWWWWBBbK',
+    'KLBBBBBBBBWWBBbK',
+    'KLBBWWWWWWWWBBbK',
+    'KLBBBWWWWWWBBBbK',
+    'KLBBBBBBBBBBBGbK',
+    'KLBBBBBBBBBBGGbK',
+    'KbbbbbbbbbbbbbbK',
+    '.KbbbbbbbbbbbbK.',
+    '..KKKKKKKKKKKK..'
+  ], { K: '#1b2340', L: '#9db2ff', B: '#5e7cf0', b: '#4258c9', W: '#ffffff', G: '#f6c945' }, 4).toDataURL();
   (function () {
     var l = doc.createElement('link'); l.rel = 'icon'; l.href = SW.blockURL; doc.head.appendChild(l);
     var lan = SW.sprite(['...KK...', '...KK...', '..KKKK..', '.KKKKKK.', '.KyYYyK.', '.KYWWYK.', '.KYWWYK.', '.KyYYyK.', '.KKKKKK.', '..KKKK..', '........'], { K: '#2a2018', Y: '#ffc34d', y: '#f09a2a', W: '#fff3c4' });
@@ -281,8 +297,7 @@
     owl: ['🌙', 'Night owl', 'You changed the time of day.'],
     dj: ['🎵', 'Cozy tunes', 'You turned on the music.'],
     mail: ['✉️', 'Mail saved', 'Email address copied.'],
-    player: ['⚽', 'Squad player', 'You voted in the RSVP demo.'],
-    splash: ['✨', 'Splash reader', 'You read ten splash texts.']
+    player: ['⚽', 'Squad player', 'You voted in the RSVP demo.']
   };
   var got = LS.get('ach', {});
   SW.toast = function (icon, title, text) {
@@ -421,6 +436,25 @@
     var nav = $('.nav'), prog = $('.progress i'), links = $$('.nav__links a'), pars = $$('[data-par]'), tick = false;
     var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
     links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href').split('#')[0].toLowerCase() === here); });
+    // sliding pill: follows the hovered link, rests on the current page, hops to Contact when that section is on screen
+    var navBox = $('.nav__links');
+    if (navBox && links.length) {
+      var pill = doc.createElement('i'); pill.className = 'nav__pill'; navBox.insertBefore(pill, navBox.firstChild); navBox.classList.add('has-pill');
+      var pageLink = links.filter(function (a) { return a.classList.contains('on'); })[0] || null, current = pageLink;
+      var movePill = function (a) {
+        links.forEach(function (l) { l.classList.toggle('hot', l === a); });
+        if (!a) { pill.style.opacity = 0; return; }
+        pill.style.opacity = 1; pill.style.width = a.offsetWidth + 'px'; pill.style.transform = 'translateX(' + a.offsetLeft + 'px)';
+      };
+      var setCurrent = function (a) { if (a === current) return; links.forEach(function (l) { l.classList.toggle('on', l === a); }); current = a; movePill(a); };
+      links.forEach(function (a) { a.addEventListener('mouseenter', function () { movePill(a); }); a.addEventListener('focus', function () { movePill(a); }); a.addEventListener('blur', function () { movePill(current); }); });
+      navBox.addEventListener('mouseleave', function () { movePill(current); });
+      window.addEventListener('resize', function () { movePill(current); });
+      movePill(current);
+      if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(function () { movePill(current); });
+      var contactLink = links.filter(function (a) { return a.getAttribute('href') === '#contact'; })[0], contactSec = doc.getElementById('contact');
+      if (contactLink && contactSec) new IntersectionObserver(function (es) { setCurrent(es[0].isIntersecting ? contactLink : pageLink); }, { rootMargin: '-45% 0px -45% 0px' }).observe(contactSec);
+    }
     function onScroll() {
       tick = false;
       var max = Math.max(1, doc.documentElement.scrollHeight - innerHeight), p = Math.min(1, Math.max(0, scrollY / max));
