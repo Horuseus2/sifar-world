@@ -258,34 +258,33 @@
     a.style.backgroundImage = 'url(' + s.toDataURL() + ')';
   })();
 
-  /* ================= INVENTORY ================= */
+  /* ================= SKILLS ================= */
   (function () {
-    var grid = $('#inv'), info = $('#invInfo'); if (!grid) return;
+    var grid = $('#skillGrid'); if (!grid) return;
     var items = [
+      ['MK', 'Marketing strategy', '#22c55e', '#05230f', 'Knowing who a thing is for.'],
+      ['BR', 'Brand building', '#b78cf0', '#2a1050', 'Turning a logo into a whole world.'],
+      ['CS', 'Case solving', '#f6c945', '#3a2706', 'Messy problem in, clear plan out.'],
+      ['PT', 'Pitching', '#ff7a8a', '#4a0f18', 'Selling an idea to a room of judges.'],
+      ['UI', 'UI design', '#38bdf8', '#082f49', 'Layout, type, colour and feel.'],
       ['HTML', 'HTML', '#e44d26', '#fff', 'The bedrock of every build.'],
-      ['CSS', 'CSS', '#2965f1', '#fff', 'Where the smooth animations live.'],
-      ['JS', 'JavaScript', '#f7df1e', '#2b2d33', 'Durability: infinite. Mostly.'],
+      ['CSS', 'CSS', '#2965f1', '#fff', 'Where the smooth motion lives.'],
+      ['JS', 'JavaScript', '#f7df1e', '#2b2d33', 'Makes everything here move.'],
       ['TS', 'TypeScript', '#3178c6', '#fff', 'JavaScript with a helmet on.'],
       ['RE', 'React', '#61dafb', '#12303a', 'Reusable blocks for interfaces.'],
-      ['NX', 'Next.js', '#15151a', '#fff', 'Powered an earlier version of my own site.'],
-      ['3D', 'three.js', '#049ef4', '#fff', 'Renders the whole city in Boys Theft Auto.'],
-      ['CV', 'Canvas', '#f97316', '#fff', 'The floating island above is drawn with it, pixel by pixel.'],
-      ['WA', 'Web Audio', '#a855f7', '#fff', 'Every sound on this site is synthesised live.'],
-      ['FB', 'Firebase', '#ffca28', '#3a2706', 'Realtime votes and multiplayer rooms.'],
-      ['GS', 'GSAP', '#88ce02', '#12300b', 'Scroll driven motion on the Kashful site.'],
-      ['TW', 'Tailwind CSS', '#38bdf8', '#082f49', 'Fast styling when the clock is ticking.'],
-      ['FM', 'Framer Motion', '#e91e63', '#fff', 'Springy interface animation for React.'],
-      ['ND', 'Node.js', '#3c873a', '#fff', 'Build scripts and map baking tools.'],
-      ['GIT', 'Git', '#f05032', '#fff', 'Save points for real life.'],
-      ['UI', 'UI design', '#ff7a8a', '#4a0f18', 'Layout, type, colour and feel.'],
-      ['BR', 'Branding', '#b78cf0', '#2a1050', 'Turning a logo into a whole world.'],
-      ['MK', 'Marketing', '#22c55e', '#05230f', 'Knowing who the thing is for.']
+      ['NX', 'Next.js', '#15151a', '#fff', 'Full sites on top of React.'],
+      ['3D', 'three.js', '#049ef4', '#fff', 'Renders the city in Boys Theft Auto.'],
+      ['CV', 'Canvas', '#f97316', '#fff', 'Draws the island, pixel by pixel.'],
+      ['WA', 'Web Audio', '#a855f7', '#fff', 'Every sound here is made live.'],
+      ['FB', 'Firebase', '#ffca28', '#3a2706', 'Realtime votes and multiplayer.'],
+      ['GS', 'GSAP', '#88ce02', '#12300b', 'Scroll driven animation.'],
+      ['ND', 'Node.js', '#3c873a', '#fff', 'Build scripts and map baking.'],
+      ['GIT', 'Git', '#f05032', '#fff', 'Save points for real life.']
     ];
     items.forEach(function (it, i) {
-      var c = doc.createElement('button'); c.type = 'button'; c.className = 'cell'; c.setAttribute('aria-label', it[1]);
-      c.innerHTML = '<span class="item" style="--c:' + it[2] + ';--tc:' + it[3] + ';--i:' + i + '">' + it[0] + '</span>';
-      function show() { $$('.cell', grid).forEach(function (o) { o.classList.remove('sel'); }); c.classList.add('sel'); info.innerHTML = '<b></b><span></span><span><em></em></span>'; $('b', info).textContent = it[1]; $$('span', info)[0].textContent = it[4]; $('em', info).textContent = 'Slot ' + (i + 1) + ' of ' + items.length; }
-      c.addEventListener('mouseenter', show); c.addEventListener('focus', show); c.addEventListener('click', show);
+      var c = doc.createElement('div'); c.className = 'box skill lift'; c.setAttribute('data-r', ''); c.style.setProperty('--i', i % 3);
+      c.innerHTML = '<i class="skill__ico" style="--c:' + it[2] + ';--tc:' + it[3] + '">' + it[0] + '</i><div><b></b><span></span></div>';
+      $('b', c).textContent = it[1]; $('span', c).textContent = it[4];
       grid.appendChild(c);
     });
   })();
@@ -307,7 +306,7 @@
     doc.addEventListener('sw:stat', function () { if (shown) setTimeout(function () { paint(false); }, 50); });
     doc.addEventListener('sw:tick', function () { $('#stTime').textContent = fmtTime(SW.played()); });
     var note = $('#stNote');
-    if (note && !SW.globalVisits) note.textContent = 'Preview mode: visits are counted on this device for now. The shared world counter switches on when the site goes live.';
+    if (note && !SW.globalVisits) note.textContent = 'Visits are counted on this device for now. A shared counter for all visitors is coming.';
   })();
 
   /* ================= COPY EMAIL ================= */

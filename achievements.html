@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-time="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Achievements | Sifar Mahfuz</title>
+<meta name="description" content="Business case competitions with Sifar Mahfuz on the final stage: HSBC Business Case Competition, Corporiddlerz, Automech, CaseSprint and BrandEdge.">
+<meta name="theme-color" content="#69bdf0">
+<script>
+  (function () {
+    var r = document.documentElement; r.classList.add('js');
+    var t = null; try { t = JSON.parse(localStorage.getItem('sw-time-of-day')); } catch (e) { }
+    if (!t) { var h = new Date().getHours(); t = (h >= 19 || h < 6) ? 'night' : 'day'; }
+    r.dataset.time = t;
+    try { if (sessionStorage.getItem('sw-wipe')) r.classList.add('from-wipe'); } catch (e) { }
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Nunito:wght@400;600;700;800&family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body class="page-achievements">
+
+<div id="loader" role="status" aria-label="Loading">
+  <div class="loader__in">
+    <canvas id="loaderIsland" width="80" height="96"></canvas>
+    <div class="loader__pct" id="loaderPct">0%</div>
+    <div class="loader__tip" id="loaderTip">Polishing the trophies</div>
+  </div>
+</div>
+<div id="tiles" aria-hidden="true"></div>
+
+<div class="progress" aria-hidden="true"><i></i></div>
+<header class="nav">
+  <a class="brand" href="index.html" aria-label="Sifar Mahfuz, home"><span class="brand__block"></span><span>Sifar Mahfuz</span></a>
+  <nav class="nav__links" aria-label="Main">
+    <a href="index.html"><i class="px" data-px="🏝️"></i>Home</a>
+    <a href="projects.html"><i class="px" data-px="🗺️"></i>Projects</a>
+    <a href="achievements.html"><i class="px" data-px="🏆"></i>Achievements</a>
+    <a href="#contact"><i class="px" data-px="✉️"></i>Contact</a>
+  </nav>
+  <div class="nav__tools">
+    <button class="tool" id="btnTime" type="button" aria-label="Toggle day and night" data-tip="Day. Click for night"><i class="px" data-px="☀️"></i></button>
+    <button class="tool" id="btnSfx" type="button" aria-label="Toggle sound effects" data-tip="Sound effects on"><i class="px" data-px="🔊"></i></button>
+    <button class="tool" id="btnMusic" type="button" aria-label="Toggle calm music" data-tip="Music off"><i class="px" data-px="🎵"></i></button>
+  </div>
+</header>
+<div id="toasts" aria-live="polite"></div>
+<div id="lightbox" role="dialog" aria-label="Photo" aria-hidden="true"><img alt=""><p>Click anywhere or press Esc to close</p></div>
+
+<main>
+
+<!-- ================= HERO ================= -->
+<section class="hero hero--mini" id="top">
+  <div class="sky" aria-hidden="true">
+    <div class="sky__grad sky__grad--day"></div>
+    <div class="sky__grad sky__grad--night"></div>
+    <div class="stars stars--a"></div><div class="stars stars--b"></div>
+    <div class="orb" data-par="0.35" style="right:7%;top:30%"><i class="orb__sun"></i><i class="orb__moon"></i></div>
+    <div id="clouds"></div>
+    <div class="hills hills--far d" data-par="0.22"></div><div class="hills hills--far n" data-par="0.22"></div>
+    <div class="hills hills--near d" data-par="0.1"></div><div class="hills hills--near n" data-par="0.1"></div>
+  </div>
+  <div class="ground" aria-hidden="true"></div>
+  <div id="sprouts" aria-hidden="true"></div>
+
+  <div class="wrap center">
+    <div class="chip" data-r><i></i>Five competitions, five final stages</div>
+    <h1 class="title" id="title" aria-label="Achievements" style="font-size:clamp(24px, 5vw, 64px)">
+      <span class="w">ACHIEVEMENTS</span>
+      <button class="splash" id="splash" type="button" aria-label="Splash text. Click for another." data-list="Three titles!|Case closed!|Mic check!|Slides ready!|Judges asked, we answered!|Podium material!">Three titles!</button>
+    </h1>
+    <p class="hero__text" data-r style="--i:5">Marketing is best learned under pressure. These are the business case competitions where my teams and I took an idea from a blank page to the final stage.</p>
+    <div class="portal-row" data-stagger>
+      <div class="box portal" data-r="pop"><i class="px" data-px="🏆" data-px-size="20"></i><b>3 Champion titles</b><span>Corporiddlerz, Automech, CaseSprint</span></div>
+      <div class="box portal" data-r="pop"><i class="px" data-px="🥈" data-px-size="20"></i><b>1st Runner Up</b><span>BrandEdge</span></div>
+      <div class="box portal" data-r="pop"><i class="px" data-px="🏅" data-px-size="20"></i><b>Grand Finalist</b><span>HSBC Business Case Competition</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 1. HSBC ================= -->
+<section class="quest comp comp--hsbc" id="hsbc">
+  <div class="layer__bg"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Finalist · 2026</span>
+      <h2 class="h2" data-r style="--i:1">HSBC Business Case Competition</h2>
+      <p class="comp__host" data-r style="--i:2">HSBC Bangladesh, with BRAC Business School</p>
+    </div>
+
+    <div class="box box--pad comp__story" data-r>
+      <p>One of the biggest business case stages in the country, run by HSBC with BRAC Business School and facilitated by BizBee. As Team 0227, the four of us cracked the case around one small table, defended our answer in front of the judges and earned a place in the grand finale.</p>
+      <p>In the final we presented our solution on the main stage. The clip below is the team intro that played before we walked on.</p>
+    </div>
+    <div class="facts" data-r>
+      <span class="tag"><i class="px" data-px="👥"></i>Team 0227</span>
+      <span class="tag"><i class="px" data-px="🏅"></i>Grand finalist</span>
+      <span class="tag"><i class="px" data-px="📅"></i>2026</span>
+    </div>
+
+    <div class="gallery gallery--photo" data-gallery data-r>
+      <div class="box frame"><div class="frame__view">
+        <img src="assets/ach/hsbc-speech.webp" data-thumb="assets/ach/hsbc-speech-s.webp" alt="Presenting with a microphone on the finale stage while three teammates stand behind" data-cap="Presenting our solution in the grand finale">
+        <img src="assets/ach/hsbc-stage.webp" data-thumb="assets/ach/hsbc-stage-s.webp" alt="Wide view of the finale stage with three judges seated in front" data-cap="The finale stage, with the judges up front" loading="lazy">
+        <img src="assets/ach/hsbc-team.webp" data-thumb="assets/ach/hsbc-team-s.webp" alt="Four teammates in suits in front of the competition backdrop" data-cap="Team 0227 at the venue" loading="lazy">
+        <img src="assets/ach/hsbc-judges.webp" data-thumb="assets/ach/hsbc-judges-s.webp" alt="Three teammates standing and answering a panel of four seated judges" data-cap="Questions from the judges" loading="lazy">
+        <img src="assets/ach/hsbc-huddle.webp" data-thumb="assets/ach/hsbc-huddle-s.webp" alt="The team talking around a table with papers" data-cap="Talking the case through" loading="lazy">
+        <img src="assets/ach/hsbc-case.webp" data-thumb="assets/ach/hsbc-case-s.webp" alt="Four teammates writing and reading around a small table marked Team 0227" data-cap="Heads down on the case" loading="lazy">
+        <img src="assets/ach/hsbc-standee.webp" data-thumb="assets/ach/hsbc-standee-s.webp" alt="A printed standee showing the four members of Team 0227" data-cap="Our team standee at the venue" loading="lazy">
+        <div class="frame__cap"></div>
+      </div></div>
+      <div class="thumbs"></div>
+    </div>
+
+    <h3 class="h3" data-r>Our team intro for the final</h3>
+    <div class="video" data-r>
+      <div class="box frame"><video controls preload="none" playsinline poster="assets/ach/intro-poster.webp" src="assets/ach/0227-intro.mp4" aria-label="Team 0227 intro video"></video></div>    </div>
+  </div>
+</section>
+
+<!-- ================= 2. CORPORIDDLERZ ================= -->
+<section class="quest comp comp--corpo" id="corporiddlerz">
+  <div class="layer__bg"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Champion · 2025</span>
+      <h2 class="h2" data-r style="--i:1">Corporiddlerz 2025</h2>
+      <p class="comp__host" data-r style="--i:2">BUP Business and Communication Club</p>
+    </div>
+
+    <div class="box box--pad comp__story" data-r>
+      <p>A national business strategy competition presented by Akij Resource in association with Logitech, organised by the BUP Business and Communication Club, a club from my own university.</p>
+      <p>Team 0227 went all the way. Our final pitch, "Winning at every bite", was built around a cookie brand called Jackies, and it won us the champion's trophy and the ৳2,00,000 prize.</p>
+    </div>
+    <div class="facts" data-r>
+      <span class="tag"><i class="px" data-px="👥"></i>Team 0227</span>
+      <span class="tag"><i class="px" data-px="🏆"></i>Champion</span>
+      <span class="tag"><i class="px" data-px="💰"></i>৳2,00,000 prize</span>
+    </div>
+
+    <div class="gallery gallery--photo" data-gallery data-r>
+      <div class="box frame"><div class="frame__view">
+        <img src="assets/ach/corpo-speech.webp" data-thumb="assets/ach/corpo-speech-s.webp" alt="Speaking into a microphone on stage behind large Corporiddlerz 2025 letters" data-cap="On stage in the Corporiddlerz final" loading="lazy">
+        <img src="assets/ach/corpo-champion.webp" data-thumb="assets/ach/corpo-champion-s.webp" alt="The team receiving a champion cheque and trophy on stage" data-cap="Receiving the champion's cheque: ৳2,00,000" loading="lazy">
+        <img src="assets/ach/corpo-team.webp" data-thumb="assets/ach/corpo-team-s.webp" alt="Three teammates holding the champion cheque and trophy" data-cap="Team 0227 with the trophy" loading="lazy">
+        <img src="assets/ach/corpo-pitch.webp" data-thumb="assets/ach/corpo-pitch-s.webp" alt="Three teammates presenting in front of a slide reading Winning at every bite" data-cap="Our final pitch: Winning at every bite" loading="lazy">
+        <img src="assets/ach/corpo-cheque.webp" data-thumb="assets/ach/corpo-cheque-s.webp" alt="Two people holding the champion trophy and cheque" data-cap="The trophy and the cheque" loading="lazy">
+        <img src="assets/ach/corpo-backdrop.webp" data-thumb="assets/ach/corpo-backdrop-s.webp" alt="Three teammates in front of a red competition backdrop" data-cap="Finalists, before the result" loading="lazy">
+        <img src="assets/ach/corpo-moment.webp" data-thumb="assets/ach/corpo-moment-s.webp" alt="Friends congratulating the team in the audience seats" data-cap="Congratulations all around" loading="lazy">
+        <div class="frame__cap"></div>
+      </div></div>
+      <div class="thumbs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. AUTOMECH ================= -->
+<section class="quest comp comp--auto" id="automech">
+  <div class="layer__bg"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Champion · 2025</span>
+      <h2 class="h2" data-r style="--i:1">Automech 2025</h2>
+      <p class="comp__host" data-r style="--i:2">Islamic University of Technology</p>
+    </div>
+
+    <div class="box box--pad comp__story" data-r>
+      <p>Automech is hosted by the Department of MPE at the Islamic University of Technology and presented by Dashboard Auto. We entered Case Motion, its business case segment, under the team name Dota 2.</p>
+      <p>Four of us, one case, and we came home as champions with the ৳25,000 prize.</p>
+    </div>
+    <div class="facts" data-r>
+      <span class="tag"><i class="px" data-px="👥"></i>Team Dota 2</span>
+      <span class="tag"><i class="px" data-px="🏆"></i>Champion, Case Motion</span>
+      <span class="tag"><i class="px" data-px="💰"></i>৳25,000 prize</span>
+    </div>
+
+    <div class="gallery gallery--photo" data-gallery data-r>
+      <div class="box frame"><div class="frame__view">
+        <img src="assets/ach/automech-team.webp" data-thumb="assets/ach/automech-team-s.webp" alt="Four teammates holding a champions cheque for the Case Motion event" data-cap="Champions of Case Motion at Automech" loading="lazy">
+        <div class="frame__cap"></div>
+      </div></div>
+      <div class="thumbs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. CASESPRINT ================= -->
+<section class="quest comp comp--sprint" id="casesprint">
+  <div class="layer__bg"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Champion · 2025</span>
+      <h2 class="h2" data-r style="--i:1">CaseSprint 2025</h2>
+      <p class="comp__host" data-r style="--i:2">Jatiya Kabi Kazi Nazrul Islam University</p>
+    </div>
+
+    <div class="box box--pad comp__story" data-r>
+      <p>A national business case competition organised by the JKKNIU Career Club and powered by Ghari.</p>
+      <p>In the grand finale we presented a market engagement plan for electric vehicles built on three steps: Attract, Convert, Transform. Build awareness, remove the barriers to buying, then turn owners into advocates. The judges liked it, and we lifted the champion's trophy.</p>
+    </div>
+    <div class="facts" data-r>
+      <span class="tag"><i class="px" data-px="🏆"></i>Champion</span>
+      <span class="tag"><i class="px" data-px="⚡"></i>Case: electric vehicles</span>
+      <span class="tag"><i class="px" data-px="🎯"></i>Attract, Convert, Transform</span>
+    </div>
+
+    <div class="gallery gallery--photo" data-gallery data-r>
+      <div class="box frame"><div class="frame__view">
+        <img src="assets/ach/sprint-speech.webp" data-thumb="assets/ach/sprint-speech-s.webp" alt="Presenting beside a large screen showing the Attract, Convert, Transform plan" data-cap="Presenting our Attract, Convert, Transform plan" loading="lazy">
+        <img src="assets/ach/sprint-team.webp" data-thumb="assets/ach/sprint-team-s.webp" alt="Four teammates kneeling with the champion trophy and cheque" data-cap="Champions of CaseSprint" loading="lazy">
+        <img src="assets/ach/sprint-trophy.webp" data-thumb="assets/ach/sprint-trophy-s.webp" alt="The team receiving the champion trophy on stage" data-cap="Receiving the champion's trophy" loading="lazy">
+        <div class="frame__cap"></div>
+      </div></div>
+      <div class="thumbs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. BRANDEDGE ================= -->
+<section class="quest comp comp--edge" id="brandedge">
+  <div class="layer__bg"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>1st Runner Up · 2025</span>
+      <h2 class="h2" data-r style="--i:1">BrandEdge 2025</h2>
+      <p class="comp__host" data-r style="--i:2">Rajshahi University</p>
+    </div>
+
+    <div class="box box--pad comp__story" data-r>
+      <p>An inter university case competition by the Rajshahi University Career Club, powered by Apon. As team Dawdlers we made it to the grand finale in Rajshahi.</p>
+      <p>There we presented a full marketing campaign to a packed room and finished as 1st runner up, with a ৳30,000 prize.</p>
+    </div>
+    <div class="facts" data-r>
+      <span class="tag"><i class="px" data-px="👥"></i>Team Dawdlers</span>
+      <span class="tag"><i class="px" data-px="🥈"></i>1st Runner Up</span>
+      <span class="tag"><i class="px" data-px="💰"></i>৳30,000 prize</span>
+    </div>
+
+    <div class="gallery gallery--photo" data-gallery data-r>
+      <div class="box frame"><div class="frame__view">
+        <img src="assets/ach/edge-speech.webp" data-thumb="assets/ach/edge-speech-s.webp" alt="Presenting with a microphone to a seated audience at the BrandEdge grand finale" data-cap="Presenting in the grand finale" loading="lazy">
+        <img src="assets/ach/edge-team.webp" data-thumb="assets/ach/edge-team-s.webp" alt="Three teammates holding the 1st runner up cheque" data-cap="Team Dawdlers, 1st runner up" loading="lazy">
+        <img src="assets/ach/edge-solo.webp" data-thumb="assets/ach/edge-solo-s.webp" alt="Holding the 1st runner up trophy and cheque" data-cap="With the trophy and the cheque" loading="lazy">
+        <div class="frame__cap"></div>
+      </div></div>
+      <div class="thumbs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="layer layer--base" id="contact" style="--prev:#26262e">
+  <div class="layer__bg"></div>
+  <div class="lantern" style="left:10%;top:140px"></div><div class="lantern" style="right:10%;top:140px"></div>
+  <div class="wrap">
+    <div class="head">
+      <span class="kicker" data-r>Contact</span>
+      <h2 class="h2" data-r style="--i:1">Let's build something</h2>
+      <p class="lede" data-r style="--i:2">Got an idea, a brand or a project that needs a creative push? Pick a door and knock.</p>
+    </div>
+
+    <div class="contact" data-stagger>
+      <div class="box sign lift" data-r>
+        <div class="sign__ico" data-social="mail"></div>
+        <h3>Email</h3>
+        <p><a href="mailto:sifarmahfuz@gmail.com">sifarmahfuz@gmail.com</a></p>
+        <button class="copy-btn" type="button" data-copy="sifarmahfuz@gmail.com">Copy address</button>
+      </div>
+      <a class="box sign" data-r href="https://www.facebook.com/sifarmahfuz" target="_blank" rel="noopener">
+        <div class="sign__ico" data-social="fb"></div>
+        <h3>Facebook</h3>
+        <p>/sifarmahfuz</p>
+        <span class="go">Visit <i>→</i></span>
+      </a>
+      <a class="box sign" data-r href="https://www.instagram.com/sifarmahfuz/" target="_blank" rel="noopener">
+        <div class="sign__ico" data-social="ig"></div>
+        <h3>Instagram</h3>
+        <p>@sifarmahfuz</p>
+        <span class="go">Visit <i>→</i></span>
+      </a>
+      <a class="box sign" data-r href="https://www.linkedin.com/in/sifar-mahfuz-csca%E2%84%A2-a74709247/" target="_blank" rel="noopener">
+        <div class="sign__ico" data-social="li"></div>
+        <h3>LinkedIn</h3>
+        <p>Sifar Mahfuz, CSCA™</p>
+        <span class="go">Visit <i>→</i></span>
+      </a>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <a class="btn btn--sm" href="index.html"><i class="px" data-px="🏝️"></i>Back to the island</a>
+    <p>Built block by block by Sifar Mahfuz.</p>
+  </footer>
+</section>
+
+</main>
+
+<script src="js/vendor/lenis.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/home.js"></script>
+<script src="js/projects.js"></script>
+</body>
+</html>

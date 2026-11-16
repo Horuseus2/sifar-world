@@ -257,14 +257,17 @@
     function restart() { clearInterval(timer); if (vis) timer = setInterval(function () { if (!doc.hidden && !(lb && lb.classList.contains('on'))) show(cur + 1); }, 5200); }
     imgs.forEach(function (im, i) {
       var b = doc.createElement('button'); b.type = 'button'; b.className = 'thumb'; b.setAttribute('aria-label', 'Show screenshot ' + (i + 1));
-      var t = doc.createElement('img'); t.src = im.getAttribute('src'); t.alt = ''; t.loading = 'lazy'; b.appendChild(t);
+      var t = doc.createElement('img'); t.src = im.dataset.thumb || im.getAttribute('src'); t.alt = ''; t.loading = 'lazy'; b.appendChild(t);
       b.addEventListener('click', function () { show(i, true); }); th.appendChild(b);
     });
-    view.style.cursor = 'zoom-in';
+    if (imgs.length < 2) th.style.display = 'none';
     view.addEventListener('click', function () { openLb(imgs[cur].src, imgs[cur].alt); });
     show(0);
     new IntersectionObserver(function (es) { vis = es[0].isIntersecting; restart(); }, { threshold: .3 }).observe(g);
   });
+
+  // a playing video pauses the background music
+  $$('video').forEach(function (v) { v.addEventListener('play', function () { var bm = $('#btnMusic'); if (bm && !bm.classList.contains('off')) bm.click(); }); });
 
   /* ================= RSVP DEMO ================= */
   (function () {

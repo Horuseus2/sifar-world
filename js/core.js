@@ -274,18 +274,13 @@
 
   /* ---------------- toasts + achievements ---------------- */
   var ACH = SW.achievements = {
-    hello: ['👋', 'Welcome, traveller', 'You spawned in Sifar\'s world.'],
     miner: ['⛏️', 'First block', 'You mined a block. It grows back.'],
     lumber: ['🌳', 'Busy hands', 'Twenty five blocks mined.'],
     shiny: ['💎', 'Ooh, shiny', 'You found a hidden gem in the rock.'],
-    collector: ['👑', 'Gem collector', 'Five gems found. Keep digging.'],
-    deeper: ['⛰️', 'Digging deeper', 'You reached the stone layer.'],
-    cave: ['🔮', 'Crystal caves', 'You found the glowing caves.'],
-    base: ['🏠', 'Home base', 'You hit the bottom. Say hi.'],
+    collector: ['👑', 'Gem collector', 'Five gems found. Keep looking.'],
     owl: ['🌙', 'Night owl', 'You changed the time of day.'],
     dj: ['🎵', 'Cozy tunes', 'You turned on the music.'],
-    mail: ['✉️', 'Mail in inventory', 'Email address copied.'],
-    quests: ['🗺️', 'Quest log opened', 'Three worlds to explore.'],
+    mail: ['✉️', 'Mail saved', 'Email address copied.'],
     player: ['⚽', 'Squad player', 'You voted in the RSVP demo.'],
     splash: ['✨', 'Splash reader', 'You read ten splash texts.']
   };
@@ -302,11 +297,11 @@
   SW.unlock = function (id) {
     if (got[id] || !ACH[id]) return false;
     got[id] = 1; LS.set('ach', got);
-    SW.toast(ACH[id][0], 'Achievement: ' + ACH[id][1], ACH[id][2]); SW.sfx.chime();
+    SW.toast(ACH[id][0], ACH[id][1], ACH[id][2]); SW.sfx.chime();
     doc.dispatchEvent(new CustomEvent('sw:stat'));
     return true;
   };
-  SW.achCount = function () { return Object.keys(got).length; };
+  SW.achCount = function () { var n = 0; for (var k in got) if (ACH[k]) n++; return n; };
   SW.achTotal = Object.keys(ACH).length;
 
   /* ---------------- visits + time ---------------- */
@@ -359,8 +354,8 @@
     // reveals
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); if (e.target.dataset.count) startCount(e.target); } });
-    }, { threshold: .14, rootMargin: '0px 0px -6% 0px' });
-    $$('[data-r], .inv, .craft').forEach(function (e) { io.observe(e); });
+    }, { threshold: .12, rootMargin: '0px 0px -8% 0px' });
+    $$('[data-r]').forEach(function (e) { io.observe(e); });
     function startCount(el) { SW.count(el, +el.dataset.count, { dec: +el.dataset.dec || 0, pre: el.dataset.pre || '', suf: el.dataset.suf || '' }); }
     var cio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { cio.unobserve(e.target); startCount(e.target); } }); }, { threshold: .4 });
     $$('[data-count]:not([data-r])').forEach(function (e) { cio.observe(e); });
@@ -418,70 +413,124 @@
     if (bm) { bm.classList.add('off'); bm.addEventListener('click', function () { var on = bm.classList.contains('off'); bm.classList.toggle('off', !on); bm.dataset.tip = on ? 'Music on' : 'Music off'; SW.setMusic(on); if (on) SW.unlock('dj'); }); }
 
     // click + hover sounds
-    doc.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('a, .btn, .cell, .thumb, .slot')) SW.sfx.click(); });
+    doc.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('a, .btn, .thumb, .tool')) SW.sfx.click(); });
     var lastHover = null;
-    doc.addEventListener('mouseover', function (e) { var t = e.target.closest && e.target.closest('.slot, .btn, .cell, .qcard, .sign, .portal'); if (t && t !== lastHover) SW.sfx.hover(); lastHover = t; });
+    doc.addEventListener('mouseover', function (e) { var t = e.target.closest && e.target.closest('.btn, .nav__links a'); if (t && t !== lastHover) SW.sfx.hover(); lastHover = t; });
 
-    // scroll HUD: xp bar, coordinates, biome, active hotbar slot
-    var fill = $('.xp__fill'), lvl = $('.xp__lvl'), dy = $('#dbgY'), dx = $('#dbgX'), dz = $('#dbgZ'), db = $('#dbgBiome');
-    var secs = $$('[data-biome]'), slots = $$('.slot'), mx = 0, mz = 0, tick = false;
+    // nav: solid after scrolling, progress line, active link, parallax
+    var nav = $('.nav'), prog = $('.progress i'), links = $$('.nav__links a'), pars = $$('[data-par]'), tick = false;
+    var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href').split('#')[0].toLowerCase() === here); });
     function onScroll() {
       tick = false;
       var max = Math.max(1, doc.documentElement.scrollHeight - innerHeight), p = Math.min(1, Math.max(0, scrollY / max));
-      if (fill) fill.style.width = (p * 100) + '%';
-      if (lvl) lvl.textContent = Math.round(p * 30);
-      if (dy) dy.textContent = Math.round(64 - p * 128);
-      var mid = innerHeight * .45, cur = secs[0];
-      secs.forEach(function (s) { if (s.getBoundingClientRect().top <= mid) cur = s; });
-      if (cur) {
-        if (db && db.textContent !== cur.dataset.biome) db.textContent = cur.dataset.biome;
-        slots.forEach(function (s) { s.classList.toggle('on', s.getAttribute('href') === '#' + cur.id); });
-        if (cur.dataset.ach) SW.unlock(cur.dataset.ach);
-      }
-      $$('[data-par]').forEach(function (el) { el.style.transform = 'translate3d(0,' + (scrollY * +el.dataset.par) + 'px,0)'; });
+      if (prog) prog.style.transform = 'scaleX(' + p + ')';
+      if (nav) nav.classList.toggle('solid', scrollY > 30);
+      for (var i = 0; i < pars.length; i++) pars[i].style.transform = 'translate3d(0,' + (scrollY * +pars[i].dataset.par) + 'px,0)';
     }
     window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(onScroll); } }, { passive: true });
     window.addEventListener('resize', onScroll);
-    window.addEventListener('mousemove', function (e) { mx = Math.round((e.clientX - innerWidth / 2) / 8); mz = Math.round((e.clientY - innerHeight / 2) / 8); if (dx) dx.textContent = mx; if (dz) dz.textContent = mz; }, { passive: true });
     onScroll();
+
+    // smooth scrolling (Lenis) and eased jumps to sections
+    var lenis = null;
+    if (window.Lenis && !reduced) {
+      lenis = SW.lenis = new window.Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 0.95 });
+      (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(performance.now());
+    }
+    SW.scrollTo = function (el) {
+      if (lenis) lenis.scrollTo(el, { duration: 1.5, easing: function (t) { return 1 - Math.pow(1 - t, 4); } });
+      else el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' });
+    };
+    doc.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+      var id = a.getAttribute('href'); if (id.length < 2) return;
+      var el = doc.getElementById(id.slice(1)); if (!el) return;
+      e.preventDefault(); SW.scrollTo(el); try { history.replaceState(null, '', id); } catch (err) { }
+    });
     doc.addEventListener('keydown', function (e) {
       if (e.target.closest && e.target.closest('input, textarea')) return;
-      var n = +e.key; if (n >= 1 && n <= slots.length && !e.ctrlKey && !e.metaKey && !e.altKey) slots[n - 1].click();
+      var n = +e.key; if (n >= 1 && n <= links.length && !e.ctrlKey && !e.metaKey && !e.altKey) links[n - 1].click();
     });
 
-    // page wipe transitions between pages
-    var wipe = $('#wipe');
-    if (wipe) {
-      for (var i = 0; i < 8; i++) { var col = doc.createElement('i'); col.style.setProperty('--i', i); wipe.appendChild(col); }
-      if (wipe.classList.contains('pre')) { wipe.classList.remove('pre'); setTimeout(function () { wipe.classList.remove('on'); }, 140); }
+    // tile transition: a mosaic of sky tiles that pops in and out as a ripple
+    var tiles = $('#tiles'), tcols = 1, trows = 1, tlist = [];
+    function buildTiles() {
+      if (!tiles) return;
+      var size = innerWidth < 700 ? 64 : 100; tcols = Math.ceil(innerWidth / size); trows = Math.ceil(innerHeight / size);
+      tiles.style.gridTemplateColumns = 'repeat(' + tcols + ',1fr)'; tiles.style.gridTemplateRows = 'repeat(' + trows + ',1fr)';
+      var pal = root.dataset.time === 'night' ? ['#141a45', '#182052', '#1c2459', '#111740'] : ['#69bdf0', '#74c4f3', '#80cbf6', '#62b6ea'];
+      tiles.textContent = ''; tlist = [];
+      for (var i = 0; i < tcols * trows; i++) { var t = doc.createElement('i'); t.style.setProperty('--c', pal[Math.random() * pal.length | 0]); tiles.appendChild(t); tlist.push(t); }
+    }
+    function ripple(cx, cy, step) {
+      var far = 0;
+      for (var i = 0; i < tlist.length; i++) { var d = Math.hypot(i % tcols - cx, (i / tcols | 0) - cy); far = Math.max(far, d); tlist[i].style.setProperty('--d', Math.round(d * step) + 'ms'); }
+      return far * step;
+    }
+    function cover(instant) {
+      if (!tiles) return;
+      if (instant) tiles.classList.add('instant');
+      tiles.classList.add('cover');
+      if (instant) { void tiles.offsetWidth; tiles.classList.remove('instant'); }
+    }
+    if (tiles) {
       doc.addEventListener('click', function (e) {
         var a = e.target.closest && e.target.closest('a[href]'); if (!a || e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || a.target === '_blank') return;
         var href = a.getAttribute('href'); if (!/\.html(#.*)?$/.test(href) || /^https?:/.test(href)) return;
-        var here = location.pathname.split('/').pop() || 'index.html'; if (href.split('#')[0] === here) return;
-        e.preventDefault(); SS.set('wipe', '1'); wipe.classList.add('on'); SW.sfx.whoosh();
-        setTimeout(function () { location.href = href; }, reduced ? 0 : 860);
+        if (href.split('#')[0].toLowerCase() === here) { if (href.indexOf('#') < 0) { e.preventDefault(); if (lenis) lenis.scrollTo(0, { duration: 1.4 }); else window.scrollTo(0, 0); } return; }
+        e.preventDefault(); SS.set('wipe', '1'); SW.sfx.whoosh();
+        buildTiles();
+        var wait = ripple(e.clientX / innerWidth * tcols - .5, e.clientY / innerHeight * trows - .5, 26);
+        cover(false);
+        setTimeout(function () { location.href = href; }, reduced ? 0 : wait + 520);
       });
-      window.addEventListener('pageshow', function (e) { if (e.persisted) wipe.classList.remove('on'); });
+      window.addEventListener('pageshow', function (e) { if (e.persisted) tiles.classList.remove('cover'); });
     }
 
-    // loader
-    var loader = $('#loader'), tips = ['Planting trees', 'Herding pixels', 'Brewing calm', 'Polishing gems', 'Feeding the clouds', 'Stacking blocks'];
-    function go() {
+    // loader: a little island builds itself block by block, then the sky breaks into tiles
+    var loader = $('#loader');
+    function reveal(hadContent) {
       doc.body.classList.add('go'); SS.set('seen', '1');
-      setTimeout(function () { SW.unlock('hello'); }, 1800);
+      try { sessionStorage.removeItem('sw-wipe'); } catch (err) { }
+      root.classList.remove('from-wipe');
+      ripple(tcols / 2 - .5, trows / 2 - .5, 38);
+      if (loader) loader.classList.add('done');
+      setTimeout(function () { if (tiles) tiles.classList.remove('cover'); }, hadContent ? 280 : 80);
       doc.dispatchEvent(new CustomEvent('sw:go'));
     }
-    if (loader) {
-      var quick = !!SS.get('seen'), lf = $('.loader__fill'), lt = $('.loader__tip'), p = 0;
-      if (SS.get('wipe')) { try { sessionStorage.removeItem('sw-wipe'); } catch (e) { } loader.classList.add('done'); loader.style.transition = 'none'; go(); }
-      else {
-        var iv = setInterval(function () {
-          p = Math.min(100, p + (quick ? 34 : 9 + Math.random() * 14)); lf.style.width = p + '%';
-          if (lt && !quick) lt.textContent = tips[(p / 17 | 0) % tips.length] + '...';
-          if (p >= 100) { clearInterval(iv); setTimeout(function () { loader.classList.add('done'); go(); }, 320); }
-        }, quick ? 90 : 170);
+    function buildIsland(done) {
+      var cv = $('#loaderIsland'), pct = $('#loaderPct'), tip = $('#loaderTip'); if (!cv) return done();
+      var x = cv.getContext('2d'), W = cv.width, H = cv.height, quick = !!SS.get('seen'), dur = quick ? 700 : 2000, r = rng(7), list = [], i;
+      for (var gx = 0; gx < 5; gx++) for (var gy = 0; gy < 5; gy++) {
+        var d = Math.hypot(gx - 2, gy - 2); if (d > 2.3) continue;
+        var dep = Math.max(1, Math.round((2.6 - d) * 1.2));
+        for (var z = -dep; z <= 0; z++) list.push({ x: gx, y: gy, z: z, t: z === 0 ? (gx === 3 && gy === 3 ? 'water' : 'grass') : z === -1 ? 'dirt' : (r() < .16 ? 'ore' : 'stone') });
       }
-    } else go();
+      [[1, 1, 1, 'log'], [1, 1, 2, 'log'], [0, 1, 3, 'leaf'], [2, 1, 3, 'leaf'], [1, 0, 3, 'blossom'], [1, 2, 3, 'leaf'], [1, 1, 3, 'leaf'], [1, 1, 4, 'blossom']].forEach(function (b) { list.push({ x: b[0], y: b[1], z: b[2], t: b[3] }); });
+      list.sort(function (a, b) { return a.z - b.z || (a.x + a.y) - (b.x + b.y) || a.x - b.x; });
+      list.forEach(function (b, n) { b.at = n / list.length * .92; b.s = SW.makeBlock(b.t, 3 + (r() * 9 | 0)); });
+      var order = list.slice().sort(function (a, b) { return ((a.x + a.y) * 100 + a.z) - ((b.x + b.y) * 100 + b.z) || a.x - b.x; });
+      var base = tip ? tip.textContent : '', tips = [base, 'Planting a tree', 'Filling the pond', 'Brewing calm', 'Almost there'], t0 = performance.now();
+      function frame(now) {
+        var p = Math.min(1, (now - t0) / dur);
+        x.clearRect(0, 0, W, H); x.imageSmoothingEnabled = false;
+        for (i = 0; i < order.length; i++) {
+          var b = order[i]; if (b.at > p) continue;
+          var k = Math.min(1, (p - b.at) * dur / 240), e = 1 - (1 - k) * (1 - k);
+          x.globalAlpha = k; x.drawImage(b.s, W / 2 - 8 + (b.x - b.y) * 8, 30 + (b.x + b.y) * 4 - b.z * 8 - Math.round((1 - e) * 16) + (b.t === 'water' ? 2 : 0));
+        }
+        x.globalAlpha = 1;
+        if (pct) pct.textContent = Math.round(p * 100) + '%';
+        if (tip && !quick) { var tx = tips[Math.min(tips.length - 1, p * tips.length | 0)]; if (tip.textContent !== tx) tip.textContent = tx; }
+        if (p < 1) requestAnimationFrame(frame); else setTimeout(done, 420);
+      }
+      requestAnimationFrame(frame);
+    }
+    buildTiles(); cover(true);
+    if (loader) loader.classList.add('tiled');
+    if (!loader || root.classList.contains('from-wipe') || reduced) requestAnimationFrame(function () { requestAnimationFrame(function () { reveal(false); }); });
+    else buildIsland(function () { reveal(true); });
   }
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot); else boot();
 })();

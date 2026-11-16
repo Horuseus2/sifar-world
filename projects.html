@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quest Log | Sifar Mahfuz</title>
+<title>Projects | Sifar Mahfuz</title>
 <meta name="description" content="Three projects by Sifar Mahfuz: Boys Theft Auto, the Kashful Foundation website and the Gaming Boys Futsal RSVP app. What they are, why they exist and everything inside them.">
 <meta name="theme-color" content="#69bdf0">
 <script>
@@ -12,60 +12,47 @@
     var t = null; try { t = JSON.parse(localStorage.getItem('sw-time-of-day')); } catch (e) { }
     if (!t) { var h = new Date().getHours(); t = (h >= 19 || h < 6) ? 'night' : 'day'; }
     r.dataset.time = t;
+    try { if (sessionStorage.getItem('sw-wipe')) r.classList.add('from-wipe'); } catch (e) { }
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Nunito:wght@400;600;700;800&family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
 </head>
 <body class="page-projects">
 
 <div id="loader" role="status" aria-label="Loading">
   <div class="loader__in">
-    <div class="loader__block"></div>
-    <div class="loader__title">OPENING QUEST LOG</div>
-    <div class="loader__bar"><div class="loader__fill"></div></div>
-    <div class="loader__tip">Stacking blocks...</div>
+    <canvas id="loaderIsland" width="80" height="96"></canvas>
+    <div class="loader__pct" id="loaderPct">0%</div>
+    <div class="loader__tip" id="loaderTip">Unrolling the map</div>
   </div>
 </div>
-<div id="wipe" aria-hidden="true"></div>
-<script>try { if (sessionStorage.getItem('sw-wipe')) document.getElementById('wipe').className = 'on pre'; } catch (e) { }</script>
+<div id="tiles" aria-hidden="true"></div>
 
-<header class="hud-top">
-  <a class="brand" href="index.html" aria-label="Sifar's World, home">
-    <span class="brand__block"></span>
-    <span class="debug">
-      <span><b>SIFAR'S WORLD</b></span>
-      <span>XYZ: <i id="dbgX" style="font-style:normal">0</i> / <em id="dbgY">64</em> / <i id="dbgZ" style="font-style:normal">0</i></span>
-      <span>Biome: <em id="dbgBiome">Quest Log</em></span>
-    </span>
-  </a>
-  <div class="hud-btns">
-    <button class="hud-btn" id="btnTime" type="button" aria-label="Toggle day and night" data-tip="Day. Click for night"><i class="px" data-px="☀️"></i></button>
-    <button class="hud-btn" id="btnSfx" type="button" aria-label="Toggle sound effects" data-tip="Sound effects on"><i class="px" data-px="🔊"></i></button>
-    <button class="hud-btn" id="btnMusic" type="button" aria-label="Toggle calm music" data-tip="Music off"><i class="px" data-px="🎵"></i></button>
+<div class="progress" aria-hidden="true"><i></i></div>
+<header class="nav">
+  <a class="brand" href="index.html" aria-label="Sifar Mahfuz, home"><span class="brand__block"></span><span>Sifar Mahfuz</span></a>
+  <nav class="nav__links" aria-label="Main">
+    <a href="index.html"><i class="px" data-px="🏝️"></i>Home</a>
+    <a href="projects.html"><i class="px" data-px="🗺️"></i>Projects</a>
+    <a href="achievements.html"><i class="px" data-px="🏆"></i>Achievements</a>
+    <a href="#contact"><i class="px" data-px="✉️"></i>Contact</a>
+  </nav>
+  <div class="nav__tools">
+    <button class="tool" id="btnTime" type="button" aria-label="Toggle day and night" data-tip="Day. Click for night"><i class="px" data-px="☀️"></i></button>
+    <button class="tool" id="btnSfx" type="button" aria-label="Toggle sound effects" data-tip="Sound effects on"><i class="px" data-px="🔊"></i></button>
+    <button class="tool" id="btnMusic" type="button" aria-label="Toggle calm music" data-tip="Music off"><i class="px" data-px="🎵"></i></button>
   </div>
 </header>
-
-<nav class="hotbar" aria-label="Main">
-  <div class="xp" aria-hidden="true"><div class="xp__fill"></div><div class="xp__lvl">0</div></div>
-  <div class="slots">
-    <a class="slot" href="index.html" data-tip="Home"><i class="px" data-px="🏝️"></i><kbd>1</kbd></a>
-    <a class="slot on" href="#log" data-tip="Quest log"><i class="px" data-px="🗺️"></i><kbd>2</kbd></a>
-    <a class="slot" href="#bta" data-tip="Boys Theft Auto"><i class="px" data-px="🚗"></i><kbd>3</kbd></a>
-    <a class="slot" href="#kashful" data-tip="Kashful"><i class="px" data-px="🌾"></i><kbd>4</kbd></a>
-    <a class="slot" href="#gb" data-tip="GB Futsal"><i class="px" data-px="⚽"></i><kbd>5</kbd></a>
-    <a class="slot" href="#contact" data-tip="Contact"><i class="px" data-px="✉️"></i><kbd>6</kbd></a>
-  </div>
-</nav>
 <div id="toasts" aria-live="polite"></div>
 <div id="lightbox" role="dialog" aria-label="Screenshot" aria-hidden="true"><img alt=""><p>Click anywhere or press Esc to close</p></div>
 
 <main>
 
 <!-- ================= QUEST LOG HERO ================= -->
-<section class="hero hero--mini" id="log" data-biome="Quest Log" data-ach="quests">
+<section class="hero hero--mini" id="log">
   <div class="sky" aria-hidden="true">
     <div class="sky__grad sky__grad--day"></div>
     <div class="sky__grad sky__grad--night"></div>
@@ -79,12 +66,12 @@
   <div id="sprouts" aria-hidden="true"></div>
 
   <div class="wrap center">
-    <div class="chip" data-r><i></i>3 quests completed</div>
-    <h1 class="title" id="title" aria-label="Quest Log">
-      <span class="w">QUEST</span> <span class="w">LOG</span>
-      <button class="splash" id="splash" type="button" aria-label="Splash text. Click for another." data-list="All shipped!|Three worlds!|Scroll for loot!|No tutorials skipped!|Side quests welcome!|Built after hours!|Real people use these!">All shipped!</button>
+    <div class="chip" data-r><i></i>Three projects shipped</div>
+    <h1 class="title" id="title" aria-label="Projects">
+      <span class="w">PROJECTS</span>
+      <button class="splash" id="splash" type="button" aria-label="Splash text. Click for another." data-list="All shipped!|Three worlds!|Scroll for loot!|No tutorials skipped!|Side projects welcome!|Built after hours!|Real people use these!">All shipped!</button>
     </h1>
-    <p class="hero__text" data-r style="--i:5">Three worlds I built from scratch. Each one started as a small itch and turned into something real people use. Pick a portal, or just keep scrolling.</p>
+    <p class="hero__text" data-r style="--i:5">Three worlds I built from scratch. Each one started as a small itch and turned into something real people use. Pick one, or just keep scrolling.</p>
     <div class="portal-row" data-stagger>
       <a class="box portal" href="#bta" data-r="pop"><i class="px" data-px="🚗" data-px-size="20"></i><b>Boys Theft Auto</b><span>Open world browser game</span></a>
       <a class="box portal" href="#kashful" data-r="pop"><i class="px" data-px="🌾" data-px-size="20"></i><b>Kashful Foundation</b><span>Website redesign</span></a>
@@ -94,11 +81,11 @@
 </section>
 
 <!-- ================= QUEST 1: BOYS THEFT AUTO ================= -->
-<section class="quest quest--bta" id="bta" data-biome="City Biome">
-  <div class="layer__bg"></div><div class="layer__edge"></div>
+<section class="quest quest--bta" id="bta">
+  <div class="layer__bg"></div>
   <div class="wrap">
     <div class="head">
-      <span class="kicker" data-r>Quest 01 · Open world game</span>
+      <span class="kicker" data-r>Project 01 · Open world game</span>
       <h2 class="h2" data-r style="--i:1">Boys Theft Auto</h2>
       <p class="lede" data-r style="--i:2">My own neighbourhood, rebuilt as an open world you can drive around with friends. All inside a browser tab.</p>
     </div>
@@ -110,41 +97,41 @@
     </div>
 
     <div class="duo">
-      <div class="box box--pad story" data-r="left">
-        <h3><i class="px" data-px="💡" data-px-size="20"></i>The spark</h3>
+      <div class="box box--pad story lift" data-r="left">
+        <h3>THE INSPIRATION</h3>
         <p>Every open world game I loved was set in a city far away. I kept wondering what it would feel like if the map was my own neighbourhood: the same roads, the same bus stops, the same tea stalls on the corner.</p>
         <p>So I built one on the real map of Dhaka Cantonment, and put my friends in it as playable characters.</p>
       </div>
-      <div class="box box--pad story" data-r="right">
-        <h3><i class="px" data-px="📦" data-px-size="20"></i>What it is</h3>
+      <div class="box box--pad story lift" data-r="right">
+        <h3>ABOUT</h3>
         <p>An open world game that runs in a browser tab with no install. The city covers Dhaka Cantonment, Kachukhet, Mirpur 14, Banani, Mohakhali, Matikata and Manikdi: 3.5 km by 6.6 km at real scale.</p>
         <p>There is not a single image or sound file in it. Buildings, vehicles, characters, textures and audio are all generated by code.</p>
       </div>
     </div>
 
     <div class="nums" data-stagger>
-      <div class="box num" data-r><b data-count="35700">0</b><span>building footprints</span></div>
-      <div class="box num" data-r><b data-count="2275">0</b><span>real roads</span></div>
-      <div class="box num" data-r><b data-count="3300" data-suf="+">0</b><span>doors you can enter</span></div>
-      <div class="box num" data-r><b data-count="60">0</b><span>real bus stops</span></div>
-      <div class="box num" data-r><b data-count="18">0</b><span>players per server</span></div>
-      <div class="box num" data-r><b data-count="0">0</b><span>image or audio files</span></div>
+      <div class="box num lift" data-r><b data-count="35700">0</b><span>building footprints</span></div>
+      <div class="box num lift" data-r><b data-count="2275">0</b><span>real roads</span></div>
+      <div class="box num lift" data-r><b data-count="3300" data-suf="+">0</b><span>doors you can enter</span></div>
+      <div class="box num lift" data-r><b data-count="60">0</b><span>real bus stops</span></div>
+      <div class="box num lift" data-r><b data-count="18">0</b><span>players per server</span></div>
+      <div class="box num lift" data-r><b data-count="0">0</b><span>image or audio files</span></div>
     </div>
 
     <h3 class="h3" data-r>What you can do in it</h3>
     <div class="feats" data-stagger>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🗺️" data-px-size="20"></i></div><h4>Real streets</h4><p>Airport Road, the Mirpur Banani flyover, the lakes, the golf course and the cantonment gates, converted from OpenStreetMap. It is all where it should be.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🚪" data-px-size="20"></i></div><h4>3,300 doors to open</h4><p>Tea stalls, pharmacies, mosques, banks, salons, car showrooms and ordinary homes, each with its own interior to walk through.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🛺" data-px-size="20"></i></div><h4>Very Dhaka vehicles</h4><p>CNG auto rickshaws, cycle rickshaws, city buses, motorbikes, army jeeps and more, with left hand traffic, signals and damage.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🌧️" data-px-size="20"></i></div><h4>Monsoon and mood</h4><p>A 24 hour day and night cycle with drizzle, monsoon rain, Kalboishakhi storms, winter fog and dusty haze. Wet roads shine and get slippery.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="👥" data-px-size="20"></i></div><h4>Multiplayer</h4><p>Type a server name, share it, and up to 18 friends are in the same city. Chat, ride along as a passenger, walk into the same shop together.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="👑" data-px-size="20"></i></div><h4>The Boys Club</h4><p>A password locked roster where my friends are playable characters, each with their own house, car, personal account and saved progress.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="💼" data-px-size="20"></i></div><h4>Jobs and missions</h4><p>Drive a taxi or CNG, run a bus route, deliver food on a bike, buy properties, fill a garage and keep your money in the bank.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🚌" data-px-size="20"></i></div><h4>Buses and rides</h4><p>Three bus lines stop at 60 real bus stops. Board as a passenger, or hire a CNG, taxi or rickshaw to take you to your waypoint.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="👕" data-px-size="20"></i></div><h4>Character creator</h4><p>Body, hair, beard and a full wardrobe including panjabi, lungi, kameez and sari. Change again at home, salons and clothing stores.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🚨" data-px-size="20"></i></div><h4>Wanted system</h4><p>Regular police outside, Military Police inside the cantonment, and special forces if you really push your luck.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🔊" data-px-size="20"></i></div><h4>Sound from nothing</h4><p>Engines, horns, rain, thunder, sirens and footsteps are synthesised live with WebAudio. No recordings anywhere.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="📊" data-px-size="20"></i></div><h4>Club analytics</h4><p>Members can see everyone's playtime and a progress score out of 100, so the bragging rights are always up to date.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🗺️" data-px-size="20"></i></div><h4>Real streets</h4><p>Airport Road, the Mirpur Banani flyover, the lakes, the golf course and the cantonment gates, converted from OpenStreetMap. It is all where it should be.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🚪" data-px-size="20"></i></div><h4>3,300 doors to open</h4><p>Tea stalls, pharmacies, mosques, banks, salons, car showrooms and ordinary homes, each with its own interior to walk through.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🛺" data-px-size="20"></i></div><h4>Very Dhaka vehicles</h4><p>CNG auto rickshaws, cycle rickshaws, city buses, motorbikes, army jeeps and more, with left hand traffic, signals and damage.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🌧️" data-px-size="20"></i></div><h4>Monsoon and mood</h4><p>A 24 hour day and night cycle with drizzle, monsoon rain, Kalboishakhi storms, winter fog and dusty haze. Wet roads shine and get slippery.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="👥" data-px-size="20"></i></div><h4>Multiplayer</h4><p>Type a server name, share it, and up to 18 friends are in the same city. Chat, ride along as a passenger, walk into the same shop together.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="👑" data-px-size="20"></i></div><h4>The Boys Club</h4><p>A password locked roster where my friends are playable characters, each with their own house, car, personal account and saved progress.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="💼" data-px-size="20"></i></div><h4>Jobs and missions</h4><p>Drive a taxi or CNG, run a bus route, deliver food on a bike, buy properties, fill a garage and keep your money in the bank.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🚌" data-px-size="20"></i></div><h4>Buses and rides</h4><p>Three bus lines stop at 60 real bus stops. Board as a passenger, or hire a CNG, taxi or rickshaw to take you to your waypoint.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="👕" data-px-size="20"></i></div><h4>Character creator</h4><p>Body, hair, beard and a full wardrobe including panjabi, lungi, kameez and sari. Change again at home, salons and clothing stores.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🚨" data-px-size="20"></i></div><h4>Wanted system</h4><p>Regular police outside, Military Police inside the cantonment, and special forces if you really push your luck.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🔊" data-px-size="20"></i></div><h4>Sound from nothing</h4><p>Engines, horns, rain, thunder, sirens and footsteps are synthesised live with WebAudio. No recordings anywhere.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="📊" data-px-size="20"></i></div><h4>Club analytics</h4><p>Members can see everyone's playtime and a progress score out of 100, so the bragging rights are always up to date.</p></div>
     </div>
 
     <h3 class="h3" data-r>Screenshots from the game</h3>
@@ -171,20 +158,7 @@
       <div><span class="key" style="--i:8">T</span>chat with friends</div>
     </div>
 
-    <h3 class="h3" data-r>Crafting recipe</h3>
-    <div class="box craft" data-stagger>
-      <div class="craft__grid">
-        <div class="cell"><span class="item" style="--c:#049ef4;--i:0">3D</span></div>
-        <div class="cell"><span class="item" style="--c:#7ebc6f;--tc:#12300b;--i:1">OSM</span></div>
-        <div class="cell"><span class="item" style="--c:#f7df1e;--tc:#2b2d33;--i:2">JS</span></div>
-        <div class="cell"><span class="item" style="--c:#ffca28;--tc:#3a2706;--i:3">FB</span></div>
-        <div class="cell"><span class="item" style="--c:#a855f7;--i:4">WA</span></div>
-        <div class="cell"><span class="item" style="--c:#3c873a;--i:5">ND</span></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-      </div>
-      <div class="craft__arrow"></div>
-      <div class="cell craft__out"><i class="px" data-px="🚗" data-px-size="20"></i></div>
-    </div>
+    <h3 class="h3" data-r>Built with</h3>
     <div class="legend" data-r>
       <span class="tag"><i style="--c:#049ef4"></i>three.js for the 3D world</span>
       <span class="tag"><i style="--c:#7ebc6f"></i>OpenStreetMap for the real map</span>
@@ -205,11 +179,11 @@
 </section>
 
 <!-- ================= QUEST 2: KASHFUL ================= -->
-<section class="quest quest--kash" id="kashful" data-biome="Kash Fields">
-  <div class="layer__bg"></div><div class="layer__edge"></div>
+<section class="quest quest--kash" id="kashful">
+  <div class="layer__bg"></div>
   <div class="wrap">
     <div class="head">
-      <span class="kicker" data-r>Quest 02 · Website redesign</span>
+      <span class="kicker" data-r>Project 02 · Website redesign</span>
       <h2 class="h2" data-r style="--i:1">Kashful Foundation</h2>
       <p class="lede" data-r style="--i:2">A new home on the web for a youth led rights organisation, grown entirely out of the colours and shape of its logo.</p>
     </div>
@@ -220,38 +194,38 @@
     </div>
 
     <div class="duo">
-      <div class="box box--pad story" data-r="left">
-        <h3><i class="px" data-px="💡" data-px-size="20"></i>The spark</h3>
-        <p>Kashful Foundation has worked on civic, digital, gender and climate rights in Bangladesh since 2017. I am part of the team as a Creative Associate.</p>
+      <div class="box box--pad story lift" data-r="left">
+        <h3>THE INSPIRATION</h3>
+        <p>Kashful Foundation has worked on civic, digital, gender and climate rights in Bangladesh since 2017.</p>
         <p>The work was loud and full of colour, but the website did not feel like it. Nobody liked the font and nothing on the page moved. I wanted a site that actually felt like Kashful.</p>
       </div>
-      <div class="box box--pad story" data-r="right">
-        <h3><i class="px" data-px="📦" data-px-size="20"></i>What it is</h3>
+      <div class="box box--pad story lift" data-r="right">
+        <h3>ABOUT</h3>
         <p>A complete redesign of kashful.org as eight connected pages: Home, About, Initiatives, Publications, Stories, Team, Get Involved and Contact.</p>
         <p>The whole look comes from the logo: its red, its black and its petal shape. Kashful is the Bangla name for the white kans grass flowers that bloom every autumn, which is why a field of them is swaying above.</p>
       </div>
     </div>
 
     <div class="nums" data-stagger style="--num:#c9141c">
-      <div class="box num" data-r><b data-count="8">0</b><span>connected pages</span></div>
-      <div class="box num" data-r><b data-count="53">0</b><span>team profiles</span></div>
-      <div class="box num" data-r><b data-count="20">0</b><span>initiatives listed</span></div>
-      <div class="box num" data-r><b data-count="15">0</b><span>partner logos</span></div>
-      <div class="box num" data-r><b data-count="4">0</b><span>rights pillars</span></div>
-      <div class="box num" data-r><b data-count="3">0</b><span>colours, no more</span></div>
+      <div class="box num lift" data-r><b data-count="8">0</b><span>connected pages</span></div>
+      <div class="box num lift" data-r><b data-count="53">0</b><span>team profiles</span></div>
+      <div class="box num lift" data-r><b data-count="20">0</b><span>initiatives listed</span></div>
+      <div class="box num lift" data-r><b data-count="15">0</b><span>partner logos</span></div>
+      <div class="box num lift" data-r><b data-count="4">0</b><span>rights pillars</span></div>
+      <div class="box num lift" data-r><b data-count="3">0</b><span>colours, no more</span></div>
     </div>
 
     <h3 class="h3" data-r>What went into it</h3>
     <div class="feats" data-stagger>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🎨" data-px-size="20"></i></div><h4>Colours from the logo</h4><p>Red, ink black and warm paper white, lifted straight from the Kashful mark. Nothing else was allowed in.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🌸" data-px-size="20"></i></div><h4>The petal motif</h4><p>One sharp corner, three soft ones. The petal from the logo repeats in photos, buttons and cards on every page.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🌊" data-px-size="20"></i></div><h4>Smooth motion</h4><p>Scroll driven reveals and gentle easing with GSAP, ScrollTrigger and Lenis, so the site glides and never jumps.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🔤" data-px-size="20"></i></div><h4>Type with a voice</h4><p>Bricolage Grotesque for headlines, Plus Jakarta Sans for reading, a serif italic for emphasis and Hind Siliguri for Bangla.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🧩" data-px-size="20"></i></div><h4>Initiatives, sorted</h4><p>Twenty programmes, active and past, each tagged with the pillars it serves: civic, digital, gender and climate rights.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="👥" data-px-size="20"></i></div><h4>A team of 53</h4><p>Every member with a portrait and role, filterable by leadership, core team, coordinators, senior volunteers and alumni.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🕰️" data-px-size="20"></i></div><h4>The journey</h4><p>A timeline from the founding in 2017 to today, alongside publications and stories from the field.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🤝" data-px-size="20"></i></div><h4>Get involved</h4><p>Clear paths for volunteers, partners and donors, with an FAQ that answers the first questions people ask.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="⚙️" data-px-size="20"></i></div><h4>One tiny build script</h4><p>No framework. A single Node script stitches shared parts and data into eight fast static pages.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🎨" data-px-size="20"></i></div><h4>Colours from the logo</h4><p>Red, ink black and warm paper white, lifted straight from the Kashful mark. Nothing else was allowed in.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🌸" data-px-size="20"></i></div><h4>The petal motif</h4><p>One sharp corner, three soft ones. The petal from the logo repeats in photos, buttons and cards on every page.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🌊" data-px-size="20"></i></div><h4>Smooth motion</h4><p>Scroll driven reveals and gentle easing with GSAP, ScrollTrigger and Lenis, so the site glides and never jumps.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🔤" data-px-size="20"></i></div><h4>Type with a voice</h4><p>Bricolage Grotesque for headlines, Plus Jakarta Sans for reading, a serif italic for emphasis and Hind Siliguri for Bangla.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🧩" data-px-size="20"></i></div><h4>Initiatives, sorted</h4><p>Twenty programmes, active and past, each tagged with the pillars it serves: civic, digital, gender and climate rights.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="👥" data-px-size="20"></i></div><h4>A team of 53</h4><p>Every member with a portrait and role, filterable by leadership, core team, coordinators, senior volunteers and alumni.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🕰️" data-px-size="20"></i></div><h4>The journey</h4><p>A timeline from the founding in 2017 to today, alongside publications and stories from the field.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🤝" data-px-size="20"></i></div><h4>Get involved</h4><p>Clear paths for volunteers, partners and donors, with an FAQ that answers the first questions people ask.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="⚙️" data-px-size="20"></i></div><h4>One tiny build script</h4><p>No framework. A single Node script stitches shared parts and data into eight fast static pages.</p></div>
     </div>
 
     <h3 class="h3" data-r>Pages from the site</h3>
@@ -267,20 +241,7 @@
       <div class="thumbs"></div>
     </div>
 
-    <h3 class="h3" data-r>Crafting recipe</h3>
-    <div class="box craft" data-stagger>
-      <div class="craft__grid">
-        <div class="cell"><span class="item" style="--c:#e44d26;--i:0">HTML</span></div>
-        <div class="cell"><span class="item" style="--c:#2965f1;--i:1">CSS</span></div>
-        <div class="cell"><span class="item" style="--c:#f7df1e;--tc:#2b2d33;--i:2">JS</span></div>
-        <div class="cell"><span class="item" style="--c:#88ce02;--tc:#12300b;--i:3">GS</span></div>
-        <div class="cell"><span class="item" style="--c:#15151a;--i:4">LN</span></div>
-        <div class="cell"><span class="item" style="--c:#3c873a;--i:5">ND</span></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-      </div>
-      <div class="craft__arrow"></div>
-      <div class="cell craft__out"><i class="px" data-px="🌸" data-px-size="20"></i></div>
-    </div>
+    <h3 class="h3" data-r>Built with</h3>
     <div class="legend" data-r>
       <span class="tag"><i style="--c:#e44d26"></i>HTML templates</span>
       <span class="tag"><i style="--c:#2965f1"></i>Hand written CSS</span>
@@ -300,11 +261,11 @@
 </section>
 
 <!-- ================= QUEST 3: GB FUTSAL ================= -->
-<section class="quest quest--gb" id="gb" data-biome="The Turf">
-  <div class="layer__bg"></div><div class="layer__edge"></div>
+<section class="quest quest--gb" id="gb">
+  <div class="layer__bg"></div>
   <div class="wrap">
     <div class="head">
-      <span class="kicker" data-r>Quest 03 · Realtime web app</span>
+      <span class="kicker" data-r>Project 03 · Realtime web app</span>
       <h2 class="h2" data-r style="--i:1">GB Futsal RSVP</h2>
       <p class="lede" data-r style="--i:2">One link that tells my futsal squad who is in, who is out and who has paid. Then it grew into a whole club house.</p>
     </div>
@@ -316,23 +277,23 @@
     </div>
 
     <div class="duo">
-      <div class="box box--pad story" data-r="left">
-        <h3><i class="px" data-px="💡" data-px-size="20"></i>The spark</h3>
+      <div class="box box--pad story lift" data-r="left">
+        <h3>THE INSPIRATION</h3>
         <p>Gaming Boys is my futsal squad. Organising a game used to mean one very long group chat: who is in, who dropped out, who is bringing a guest, who still owes the turf fee.</p>
         <p>I wanted one link that answers all of it at a glance.</p>
       </div>
-      <div class="box box--pad story" data-r="right">
-        <h3><i class="px" data-px="📦" data-px-size="20"></i>What it is</h3>
+      <div class="box box--pad story lift" data-r="right">
+        <h3>ABOUT</h3>
         <p>A realtime RSVP web app. An admin posts a session with a place, time, player cap and slot fee. Everyone votes In or Out, and the list updates live for the whole squad.</p>
         <p>Over time it became the club's home: member profiles, attendance stats, and a full tournament hub for GB Futsal Season 4 with a player auction, fixtures and a league table that calculates itself.</p>
       </div>
     </div>
 
     <div class="nums nums--4" data-stagger style="--num:#15a34a">
-      <div class="box num" data-r><b data-count="1">0</b><span>link for the whole squad</span></div>
-      <div class="box num" data-r><b data-count="4">0</b><span>digit PIN to log in</span></div>
-      <div class="box num" data-r><b data-count="14">0</b><span>fixtures in Season 4</span></div>
-      <div class="box num" data-r><b data-count="0">0</b><span>installs needed</span></div>
+      <div class="box num lift" data-r><b data-count="1">0</b><span>link for the whole squad</span></div>
+      <div class="box num lift" data-r><b data-count="4">0</b><span>digit PIN to log in</span></div>
+      <div class="box num lift" data-r><b data-count="14">0</b><span>fixtures in Season 4</span></div>
+      <div class="box num lift" data-r><b data-count="0">0</b><span>installs needed</span></div>
     </div>
 
     <h3 class="h3" data-r>Try it: a live demo</h3>
@@ -363,31 +324,18 @@
 
     <h3 class="h3" data-r>Everything inside</h3>
     <div class="feats" data-stagger>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🔑" data-px-size="20"></i></div><h4>Name and PIN</h4><p>No emails, no passwords to forget. A name and a 4 digit PIN, hashed in the browser before it goes anywhere.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="⚡" data-px-size="20"></i></div><h4>Realtime votes</h4><p>Tap In or Out and everyone sees it instantly. No refreshing, no scrolling back through chat.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🧮" data-px-size="20"></i></div><h4>A fair last spot</h4><p>The player cap is checked on the server at the moment you vote, so two people can never grab the same last slot.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="💸" data-px-size="20"></i></div><h4>Fees and payments</h4><p>Each session shows the slot fee, with a paid tick next to every player. Guests are counted too.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🛠️" data-px-size="20"></i></div><h4>Admin tools</h4><p>Create and edit sessions, manage member roles, and preview the app exactly as a member sees it with one toggle.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="📈" data-px-size="20"></i></div><h4>Squad stats</h4><p>Attendance for every member, animated tiles and a podium for the most reliable players.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🏆" data-px-size="20"></i></div><h4>Tournament hub</h4><p>A full season in one tab: registration with a photo and payment reference, captains, teams and all the info.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="🔨" data-px-size="20"></i></div><h4>Player auction</h4><p>A live auction carousel with credit budgets. Sell a player to a team and the team sheets update for everyone.</p></div>
-      <div class="box feat" data-r><div class="feat__ico"><i class="px" data-px="📅" data-px-size="20"></i></div><h4>Fixtures and table</h4><p>Twelve group matches, a semi final and a final. Enter goals and assists, and the league table and top scorer race update themselves.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🔑" data-px-size="20"></i></div><h4>Name and PIN</h4><p>No emails, no passwords to forget. A name and a 4 digit PIN, hashed in the browser before it goes anywhere.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="⚡" data-px-size="20"></i></div><h4>Realtime votes</h4><p>Tap In or Out and everyone sees it instantly. No refreshing, no scrolling back through chat.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🧮" data-px-size="20"></i></div><h4>A fair last spot</h4><p>The player cap is checked on the server at the moment you vote, so two people can never grab the same last slot.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="💸" data-px-size="20"></i></div><h4>Fees and payments</h4><p>Each session shows the slot fee, with a paid tick next to every player. Guests are counted too.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🛠️" data-px-size="20"></i></div><h4>Admin tools</h4><p>Create and edit sessions, manage member roles, and preview the app exactly as a member sees it with one toggle.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="📈" data-px-size="20"></i></div><h4>Squad stats</h4><p>Attendance for every member, animated tiles and a podium for the most reliable players.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🏆" data-px-size="20"></i></div><h4>Tournament hub</h4><p>A full season in one tab: registration with a photo and payment reference, captains, teams and all the info.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="🔨" data-px-size="20"></i></div><h4>Player auction</h4><p>A live auction carousel with credit budgets. Sell a player to a team and the team sheets update for everyone.</p></div>
+      <div class="box feat lift" data-r><div class="feat__ico"><i class="px" data-px="📅" data-px-size="20"></i></div><h4>Fixtures and table</h4><p>Twelve group matches, a semi final and a final. Enter goals and assists, and the league table and top scorer race update themselves.</p></div>
     </div>
 
-    <h3 class="h3" data-r>Crafting recipe</h3>
-    <div class="box craft" data-stagger>
-      <div class="craft__grid">
-        <div class="cell"><span class="item" style="--c:#e44d26;--i:0">HTML</span></div>
-        <div class="cell"><span class="item" style="--c:#2965f1;--i:1">CSS</span></div>
-        <div class="cell"><span class="item" style="--c:#f7df1e;--tc:#2b2d33;--i:2">JS</span></div>
-        <div class="cell"><span class="item" style="--c:#ffca28;--tc:#3a2706;--i:3">FS</span></div>
-        <div class="cell"><span class="item" style="--c:#ff8a3d;--i:4">AU</span></div>
-        <div class="cell"><span class="item" style="--c:#15151a;--i:5">GH</span></div>
-        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-      </div>
-      <div class="craft__arrow"></div>
-      <div class="cell craft__out"><i class="px" data-px="⚽" data-px-size="20"></i></div>
-    </div>
+    <h3 class="h3" data-r>Built with</h3>
     <div class="legend" data-r>
       <span class="tag"><i style="--c:#e44d26"></i>HTML, no build step</span>
       <span class="tag"><i style="--c:#2965f1"></i>CSS animations</span>
@@ -407,53 +355,53 @@
 </section>
 
 <!-- ================= CONTACT ================= -->
-<section class="layer layer--base after-turf" id="contact" data-biome="Home Base" data-ach="base">
-  <div class="layer__bg"></div><div class="layer__edge"></div>
+<section class="layer layer--base" id="contact" style="--prev:#12382a">
+  <div class="layer__bg"></div>
   <div class="lantern" style="left:10%;top:140px"></div><div class="lantern" style="right:10%;top:140px"></div>
   <div class="wrap">
     <div class="head">
-      <span class="kicker" data-r>Next quest</span>
+      <span class="kicker" data-r>Contact</span>
       <h2 class="h2" data-r style="--i:1">Got an idea? Say hi</h2>
       <p class="lede" data-r style="--i:2">If any of these made you smile, or you have a world of your own that needs building, pick a door and knock.</p>
     </div>
 
     <div class="contact" data-stagger>
-      <div class="box sign" data-r>
+      <div class="box sign lift" data-r>
         <div class="sign__ico" data-social="mail"></div>
         <h3>Email</h3>
-        <p><a class="mono" href="mailto:sifarmahfuz@gmail.com">sifarmahfuz@gmail.com</a></p>
+        <p><a href="mailto:sifarmahfuz@gmail.com">sifarmahfuz@gmail.com</a></p>
         <button class="copy-btn" type="button" data-copy="sifarmahfuz@gmail.com">Copy address</button>
       </div>
       <a class="box sign" data-r href="https://www.facebook.com/sifarmahfuz" target="_blank" rel="noopener">
         <div class="sign__ico" data-social="fb"></div>
         <h3>Facebook</h3>
-        <p class="mono">/sifarmahfuz</p>
-        <span class="go">Visit ▶</span>
+        <p>/sifarmahfuz</p>
+        <span class="go">Visit <i>→</i></span>
       </a>
       <a class="box sign" data-r href="https://www.instagram.com/sifarmahfuz/" target="_blank" rel="noopener">
         <div class="sign__ico" data-social="ig"></div>
         <h3>Instagram</h3>
-        <p class="mono">@sifarmahfuz</p>
-        <span class="go">Visit ▶</span>
+        <p>@sifarmahfuz</p>
+        <span class="go">Visit <i>→</i></span>
       </a>
       <a class="box sign" data-r href="https://www.linkedin.com/in/sifar-mahfuz-csca%E2%84%A2-a74709247/" target="_blank" rel="noopener">
         <div class="sign__ico" data-social="li"></div>
         <h3>LinkedIn</h3>
         <p>Sifar Mahfuz, CSCA™</p>
-        <span class="go">Visit ▶</span>
+        <span class="go">Visit <i>→</i></span>
       </a>
     </div>
   </div>
 
   <footer class="foot">
     <a class="btn btn--sm" href="index.html"><i class="px" data-px="🏝️"></i>Back to the island</a>
-    <p>Built block by block by Sifar Mahfuz. No pixels were harmed.</p>
+    <p>Built block by block by Sifar Mahfuz.</p>
   </footer>
-  <div class="bedrock" aria-hidden="true"></div>
 </section>
 
 </main>
 
+<script src="js/vendor/lenis.min.js"></script>
 <script src="js/core.js"></script>
 <script src="js/home.js"></script>
 <script src="js/projects.js"></script>
